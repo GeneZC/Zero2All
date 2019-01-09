@@ -5,7 +5,7 @@ import random
 import matplotlib.pyplot as plt
 
 '''
-Perceptron Algprithm
+Perceptron Algorithm
 '''
 class Perceptron(object):
     def __init__(self, learning_rate=0.1, update_schema='sgd', is_dual=True):
@@ -19,13 +19,12 @@ class Perceptron(object):
         self.update_schema = update_schema
         self.is_dual = is_dual
 
-    def train(self, X, Y, iteration = 1000):
+    def train(self, X, Y, iteration=1000):
         '''
         param X: numpy.array, [None, size of feature vector], batches of feature vectors
         params Y: numpy.array, [None, 1], batches of labels
-        return trained PARAMETERs
+        return trained parameters
         '''
-        # TODO: initialize weights 
         data_num = X.shape[0]
         feature_size = X.shape[1]
         it = 0
@@ -75,10 +74,9 @@ class Perceptron(object):
                         break
                     else:
                         update_X = np.array([x[0] for x in wrong])
-                        _update_Y = np.array([[x[1]]*feature_size for x in wrong])
                         update_Y = np.array([x[1] for x in wrong])
-                        self.W += self.lr*np.mean(np.multiply(update_X, np.squeeze(_update_Y,axis=2)), axis=0)
-                        self.b += self.lr*np.mean(update_Y)
+                        self.W += self.lr*np.mean(update_X * update_Y, axis=0)
+                        self.b += self.lr*np.mean(update_Y, axis=0)
                         print("Iteration: "+str(it)+" W: "+str(self.W)+" b: "+str(self.b))
             else:
                 print("Error unknown update schema.")
@@ -87,7 +85,7 @@ class Perceptron(object):
     def predict(self, X):
         pass
 
-def make_data(w, b, data_num):
+def generate_data(w, b, data_num):
     w = np.array(w)
     feature_size = len(w)
     X = np.random.rand(data_num, feature_size) * 20  #随机产生numlines个数据的数据集
@@ -95,7 +93,7 @@ def make_data(w, b, data_num):
 
     #下面是存储标准分类线，以便显示观察
     x = np.linspace(0, 20, 500)      #创建分类线上的点，以点构线。
-    y = -w[...,0] / w[...,1] * x - b / w[...,1]
+    y = -w[0] / w[1] * x - b / w[1]
     rows = np.column_stack((x.T, y.T))
     X = np.row_stack((X, rows))
     Y = np.row_stack((np.expand_dims(Y, axis=1), np.zeros((500, 1))))
@@ -109,7 +107,7 @@ def show_figure(X, Y):
     plt.xlabel('X')
     plt.ylabel('Y')
     #图例设置
-    labels = ['classOne', 'standarLine', 'classTow', 'modelLine']
+    labels = ['classOne', 'standardLine', 'classTow', 'modelLine']
     markers = ['o','.','x','.']
     colors = ['r','y','g','b']
     for i in range(4):
@@ -120,8 +118,7 @@ def show_figure(X, Y):
     plt.show()
 
 def test():
-    X, Y = make_data([1,-2], 7, 200)
-    show_figure(X, Y)
+    X, Y = generate_data([1,-2], 7, 200)
     perceptron = Perceptron(is_dual=False)
     w, b = perceptron.train(X, Y)
     x = np.linspace(0,20,500)    #创建分类线上的点，以点构线。
