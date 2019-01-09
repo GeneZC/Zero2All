@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 Perceptron Algorithm
 '''
 class Perceptron(object):
-    def __init__(self, learning_rate=0.1, update_schema='sgd', is_dual=True):
+    def __init__(self, learning_rate=0.1, update_schema='bgd', is_dual=True):
         '''
         param learning_rate: float, learning rate of updating, default 0.001
         param update_schema: str, schema of updating algorithm, in ['sgd', 'bgd'], default 'sgd'
@@ -18,6 +18,9 @@ class Perceptron(object):
         self.lr = learning_rate
         self.update_schema = update_schema
         self.is_dual = is_dual
+        self.W = None
+        self.a = None
+        self.b = None
 
     def train(self, X, Y, iteration=1000):
         '''
@@ -35,15 +38,19 @@ class Perceptron(object):
             self.b = np.zeros(1)
             while it <= iteration:
                 it += 1
+                temp = np.matmul(gram_matrix, self.a*Y.squeeze(-1))+self.b
                 wrong = []
                 for i, (x, y) in enumerate(zip(X, Y)):
-                    if y*(np.sum([self.a[j]*Y[j]*gram_matrix[i,j] for j in range(data_num)])+self.b) <= 0:
+                    if y*temp[i] <= 0:
                         self.a[i] += self.lr
                         self.b += self.lr*y
                         wrong.append((x, y))
                 if len(wrong) == 0:
                     break
-            return self.a, self.b
+                else:
+                    self.W = np.matmul(X.T, self.a*Y.squeeze(-1))
+                    print("Iteration: "+str(it)+" W: "+str(self.W)+" b: "+str(self.b))
+            return self.W, self.b
         else:
             if self.update_schema == 'sgd':
                 self.W = np.random.randn(feature_size) / np.sqrt(0.5)
@@ -75,7 +82,7 @@ class Perceptron(object):
                     else:
                         update_X = np.array([x[0] for x in wrong])
                         update_Y = np.array([x[1] for x in wrong])
-                        self.W += self.lr*np.mean(update_X * update_Y, axis=0)
+                        self.W += self.lr*np.mean(update_X*update_Y, axis=0)
                         self.b += self.lr*np.mean(update_Y, axis=0)
                         print("Iteration: "+str(it)+" W: "+str(self.W)+" b: "+str(self.b))
             else:
@@ -83,7 +90,11 @@ class Perceptron(object):
             return self.W, self.b
 
     def predict(self, X):
-        pass
+        Y = np.sign(np.matmul(X, self.W) + self.b)
+        return Y
+
+
+            
 
 def generate_data(w, b, data_num):
     w = np.array(w)
@@ -119,7 +130,7 @@ def show_figure(X, Y):
 
 def test():
     X, Y = generate_data([1,-2], 7, 200)
-    perceptron = Perceptron(is_dual=False)
+    perceptron = Perceptron(is_dual=True)
     w, b = perceptron.train(X, Y)
     x = np.linspace(0,20,500)    #创建分类线上的点，以点构线。
     y = -w[0]/w[1]*x - b/w[1]
