@@ -5,30 +5,33 @@ from collections import namedtuple
 from pprint import pformat
 from sklearn.metrics.pairwise import euclidean_distances
 
+'''
+K Nearest Neighbors Algorithm
+'''
 class KNN(object):
     def __init__(self, k=5):
         self.k = k
 
-    def train(self, X, Y):
+    def train(self, X, y):
         pass
         
     def predict(self, X):
         pass
 
 class VallinaKNN(KNN):
-    def train(self, X, Y):
+    def train(self, X, y):
         self.X_train = X
-        self.Y_train = Y
+        self.y_train = y
 
     def predict(self, X):
-        Y = np.empty(X.shape[0])
+        y = np.empty(X.shape[0])
         distances = euclidean_distances(X, self.X_train)
         distances_argsort = distances.argsort(axis=1)
         k_min_indices = np.argwhere(distances_argsort<self.k)[:,1].reshape((-1,self.k))
-        labels = self.Y_train[k_min_indices]
+        labels = self.y_train[k_min_indices]
         for i in range(len(X)):
-            Y[i] = np.bincount(labels[i]).argmax()
-        return Y
+            y[i] = np.bincount(labels[i]).argmax()
+        return y
 
 class Node(namedtuple('Node', 'location label left_child right_child')):
     def __repr__(self):
@@ -44,7 +47,7 @@ class KDTree(KNN):
         return np.linalg.norm(x-y, ord=2)
 
     @staticmethod
-    def _fit(X, Y, depth=0):
+    def _fit(X, y, depth=0):
         try:
             k = X.shape[1]
         except IndexError as e:
@@ -61,7 +64,7 @@ class KDTree(KNN):
 
         return Node(
             location=X[median],
-            label=Y[median],
+            label=y[median],
             left_child=KDTree._fit(X[:median], Y, depth + 1),
             right_child=KDTree._fit(X[median + 1:], Y, depth + 1)
         )
@@ -84,14 +87,14 @@ class KDTree(KNN):
             next_branch = tree.right_child
         return self._search(point, tree=next_branch, depth=depth+1, best=next_best)
 
-    def train(self, X, Y):
-        self.root = KDTree._fit(X, Y)
+    def train(self, X, y):
+        self.root = KDTree._fit(X, y)
 
     def predict(self, X):
-        Y = np.empty(X.shape[0])
+        y = np.empty(X.shape[0])
         for i in range(X.shape[0]):
-            Y[i] = self._search(X[i], self.root)
-        return Y
+            y[i] = self._search(X[i], self.root)
+        return y
 
 
 from sklearn import datasets

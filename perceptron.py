@@ -21,10 +21,10 @@ class Perceptron(object):
         self.a = None
         self.b = None
 
-    def train(self, X, Y, iteration=1000):
+    def train(self, X, y, iteration=1000):
         '''
         param X: numpy.array, [None, size of feature vector], batches of feature vectors
-        params Y: numpy.array, [None, 1], batches of labels
+        params y: numpy.array, [None, 1], batches of labels
         return trained parameters
         '''
         data_num = X.shape[0]
@@ -39,15 +39,15 @@ class Perceptron(object):
                 it += 1
                 temp = np.matmul(gram_matrix, self.a*Y)+self.b
                 wrong = []
-                for i, (x, y) in enumerate(zip(X, Y)):
-                    if y*temp[i] <= 0:
+                for i, (x, y_) in enumerate(zip(X, y)):
+                    if y_*temp[i] <= 0:
                         self.a[i] += self.lr
-                        self.b += self.lr*y
-                        wrong.append((x, y))
+                        self.b += self.lr*y_
+                        wrong.append((x, y_))
                 if len(wrong) == 0:
                     break
                 else:
-                    self.W = np.matmul(X.T, self.a*Y)
+                    self.W = np.matmul(X.T, self.a*y)
                     print("Iteration: "+str(it)+" W: "+str(self.W)+" b: "+str(self.b))
             return self.W, self.b
         else:
@@ -57,9 +57,9 @@ class Perceptron(object):
                 while it <= iteration:
                     it += 1
                     wrong = []
-                    for x, y in zip(X, Y):
-                        if y*(np.dot(self.W, x)+self.b) <= 0:
-                            wrong.append((x, y))
+                    for x, y_ in zip(X, y):
+                        if y_*(np.dot(self.W, x)+self.b) <= 0:
+                            wrong.append((x, y_))
                     if len(wrong) == 0:
                         break
                     else:
@@ -73,24 +73,24 @@ class Perceptron(object):
                 while it <= iteration:
                     it += 1
                     wrong = []
-                    for x, y in zip(X, Y):
-                        if y*(np.dot(self.W, x)+self.b) <= 0:
-                            wrong.append((x, y))
+                    for x, y_ in zip(X, y):
+                        if y_*(np.dot(self.W, x)+self.b) <= 0:
+                            wrong.append((x, y_))
                     if len(wrong) == 0:
                         break
                     else:
                         update_X = np.array([x[0] for x in wrong])
-                        update_Y = np.array([x[1] for x in wrong])
-                        self.W += self.lr*np.mean(update_X*update_Y, axis=0)
-                        self.b += self.lr*np.mean(update_Y, axis=0)
+                        update_y = np.array([x[1] for x in wrong])
+                        self.W += self.lr*np.mean(update_X*update_y, axis=0)
+                        self.b += self.lr*np.mean(update_y, axis=0)
                         print("Iteration: "+str(it)+" W: "+str(self.W)+" b: "+str(self.b))
             else:
                 print("Error unknown update schema.")
             return self.W, self.b
 
     def predict(self, X):
-        Y = np.sign(np.matmul(X, self.W) + self.b)
-        return Y
+        y = np.sign(np.matmul(X, self.W) + self.b)
+        return y
 
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
