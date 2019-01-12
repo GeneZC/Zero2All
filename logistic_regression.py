@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import math
 
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import normalize
-from sklearn.metrics import accuracy_score
-
+'''
+Logistic Regression Algorithm
+'''
 class LogisticRegression():
     def __init__(self, learning_rate=.1):
         self.w = None
@@ -38,6 +38,12 @@ class LogisticRegression():
     def predict(self, X):
         y_pred = np.round(self.sigmoid(X.dot(self.w) + self.b))
         return y_pred.astype(int)
+
+
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import normalize
+from sklearn.metrics import accuracy_score
 
 if __name__ == "__main__":
     data = datasets.load_iris()
