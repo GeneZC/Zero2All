@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 
 '''
-Support Vector Machine Algorithm
+K Means Algorithm
 '''
 class KMeans(object):
     def __init__(self, k=2, max_iterations=500):

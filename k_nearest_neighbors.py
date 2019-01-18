@@ -18,7 +18,7 @@ class KNN(object):
     def predict(self, X):
         pass
 
-class VallinaKNN(KNN):
+class VanillaKNN(KNN):
     def train(self, X, y):
         self.X_train = X
         self.y_train = y

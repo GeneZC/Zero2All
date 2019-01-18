@@ -12,7 +12,7 @@ class LogisticRegression():
         self.b = None
         self.learning_rate = learning_rate
 
-    def _initialize_parameters(self, X):
+    def _init_params(self, X):
         n_features = np.shape(X)[1]
         # 初始化参数范围 [-1/sqrt(N), 1/sqrt(N)]
         limit = 1 / math.sqrt(n_features)
@@ -23,7 +23,7 @@ class LogisticRegression():
         return 1 / (1 + np.exp(-x))
 
     def train(self, X, y, n_iterations=1000):
-        self._initialize_parameters(X)
+        self._init_paras(X)
         for i in range(n_iterations):
             hypo = X.dot(self.w + self.b) #+ self.b
             y_pred = self.sigmoid(hypo)
