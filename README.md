@@ -1,6 +1,9 @@
-# ZerotoAll
+# Zero2All
 
-## Python
-- Perceptron: including normal form and dual form, Stochastic Gradient Descent and Batch Gradient Descent
+## ML
 
-## Cpp
+Implementations of **Machine Learning** algorithms.
+
+## Leetcode
+
+Practice on Leetcode.
