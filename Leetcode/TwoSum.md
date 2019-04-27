@@ -1,6 +1,6 @@
 ## Initial Version
 
-Simple combination
+Simple Combination
 ```C
 class Solution {
 public:
@@ -27,7 +27,7 @@ public:
 
 ## Revised Version
 
-HashMap
+Hash Map
 ```C
 class Solution {
 public:
